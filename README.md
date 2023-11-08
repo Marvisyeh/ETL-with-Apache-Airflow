@@ -1,5 +1,5 @@
 # ETL Pipeline with Apache Airflow
-
+![](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
  
 這個專案使用Apache Airflow建立一個ETL管道。主要目標是從中央氣象署接取36小時的天氣預報、轉換成需求的格式，然後寫入PostgresSQL資料庫中。這個管道毀以每六個小時更新最新資訊。
 
