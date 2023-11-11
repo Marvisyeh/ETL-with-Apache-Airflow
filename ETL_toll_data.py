@@ -13,9 +13,9 @@ import requests
 import pandas as pd
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(r'/opt/airflow/dags/data/.env')
 
-filedir = r'./data'
+filedir = r'/home/airflow/data'
 if not os.path.exists(filedir):
     os.mkdir(filedir)
 
@@ -39,7 +39,7 @@ def get_apidata():
 
 
 def transform():
-    with open(r'./data/weather.json', 'r', encoding='utf-8') as f:
+    with open(r'/home/airflow/data/weather.json', 'r', encoding='utf-8') as f:
         data = json.load(f)
     result = pd.DataFrame()
     temp = data['location'][0]['weatherElement']
@@ -50,7 +50,7 @@ def transform():
         result = pd.concat([result, df], axis=1)
     result = result.iloc[:, [0, 1, 3, 5, 7, 9]]
 
-    with open(r'./data/weather.sql', 'w') as f:
+    with open(r'/home/airflow/data/weather.sql', 'w') as f:
         f.write(
             "DELETE FROM weather WHERE startTime IN ( '"
             + "','".join(result.startTime)
@@ -88,15 +88,15 @@ extract = PythonOperator(
 
 transformer = PythonOperator(
     task_id='transform_data_use_pandas',
-    bash_command=transform,
+    python_callable=transform,
     dag=dag
 )
 
 load = PostgresOperator(
     task_id="write_to_sqlserever",
     postgres_conn_id="my_sqlserver",
-    sql=r"./data/weather.sql",
-    database="master",
+    sql=r"/home/airflow/data/data/weather.sql",
+    database="ods",
     dag=dag,
 )
 
