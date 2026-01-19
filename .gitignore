@@ -1,0 +1,27 @@
+# Ignore all files
+*
+
+!*.py
+
+# Airflow
+!dags/
+!dags/**
+dags/temp_data
+**/__pycache__
+__pycache__
+
+# Clickhouse
+!clickhouse/README.md
+
+# README
+!README.md
+
+# Docker
+!docker-compose.yaml
+!Dockerfile
+!requirements.txt
+!setup.sh
+
+# config
+!.gitignore
+!.editorconfig
