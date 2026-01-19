@@ -1,0 +1,20 @@
+# Apache Airflow 核心（已在官方镜像中包含）
+# apache-airflow==3.1.6
+
+# Postgres Provider（用於 PostgresOperator）
+# apache-airflow-providers-postgres==5.10.0
+
+# ClickHouse Provider
+airflow-clickhouse-plugin==1.6.0
+
+# 資料處理
+pandas>=2.0.0
+numpy>=1.24.0
+
+# HTTP 請求
+requests>=2.31.0
+
+# 環境變量管理
+python-dotenv>=1.0.0
+
+clickhouse-connect>=0.6.0
