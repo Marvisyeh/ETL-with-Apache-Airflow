@@ -46,25 +46,16 @@
    - 執行資料庫遷移
    - 創建第一個管理員帳號（預設：`airflow` / `airflow`）
 
-> ⚠️ **注意**: 資料庫初始化可能需要幾分鐘時間，請耐心等待。
 
 **2. 構建 Docker 鏡像（首次或更新依賴後）**
 
 如果使用自定義 Dockerfile（包含 `requirements.txt` 中的依賴），需要先構建鏡像：
 
 ```bash
-docker-compose up -d
-```
-
-或使用 Docker Compose v2：
-
-```bash
 docker compose up -d
 ```
 
 **3. 訪問 Airflow Web UI**
-
-等待服務啟動完成後（約 1-2 分鐘），訪問：
 
 - **URL**: http://localhost:8080
 - **預設帳號**: `airflow`
@@ -92,32 +83,30 @@ docker-compose down -v
 
 ```
 ETL-with-Apache-Airflow/
-├── dags/                    # DAG 文件目錄
-│   ├── ods/                 # ODS 層 DAG
+├── dags/                             # DAG 文件目錄
+│   ├── ods/                          # ODS 層 DAG
 │   │   ├── api_get_weather_dag.py    # ODS 層 ETL 管道定義
 │   │   └── api_get_weather_etl.py    # ODS 層 ETL 邏輯
-│   ├── dw/                  # DW 層 DAG
+│   ├── dw/                           # DW 層 DAG
 │   │   ├── api_get_weather_dag.py    # DW 層 ETL 管道定義
 │   │   └── api_get_weather_etl.py    # DW 層 ETL 邏輯
-│   ├── common/              # 共用工具
-│   ├── configs/             # 配置檔案
-│   ├── temp_data/           # 臨時數據存儲目錄
-│   └── dm/                  # DM 層目錄
-├── clickhouse/              # ClickHouse 配置目錄
-│   ├── config/              # ClickHouse 配置文件
-│   └── README.md            # ClickHouse 配置說明
-├── logs/                    # Airflow 日誌目錄
-├── plugins/                 # 自定義插件目錄
-├── config/                  # Airflow 配置文件目錄
-│   └── airflow.cfg          # Airflow 配置文件
-├── docker-compose.yaml      # Docker Compose 配置
-├── Dockerfile               # 自定義 Docker 鏡像定義
-├── requirements.txt         # Python 依賴列表
-├── .env                     # 環境變數配置（需自行創建）
-├── env.example              # 環境變數模板
-├── .gitignore              # Git 忽略文件
-├── setup.sh                # 初始化腳本
-└── README.md               # 項目說明文檔
+│   ├── dm/                           # DM 層 DAG
+│   │   ├── api_get_weather_dag.py    # DM 層 ETL 管道定義
+│   │   └── api_get_weather_etl.py    # DM 層 ETL 邏輯
+│   ├── common/                       # 共用工具
+│   ├── configs/                      # 配置檔案
+│   └── temp_data/                    # 臨時數據存儲目錄
+├── logs/                             # Airflow 日誌目錄
+├── plugins/                          # 自定義插件目錄
+├── config/                           # Airflow 配置文件目錄
+│   └── airflow.cfg                   # Airflow 配置文件
+├── docker-compose.yaml               # Docker Compose 配置
+├── Dockerfile                        # 自定義 Docker 鏡像定義
+├── requirements.txt                  # Python 依賴列表
+├── env.example                       # 環境變數模板
+├── .gitignore                        # Git 忽略文件
+├── setup.sh                          # 初始化腳本
+└── README.md                         # 項目說明文檔
 ```
 
 #### 依賴管理
@@ -127,24 +116,19 @@ ETL-with-Apache-Airflow/
 **添加新的 Python 依賴：**
 
 1. 編輯 `requirements.txt`，添加所需的套件：
-
    ```txt
    # 例如添加新的庫
    beautifulsoup4>=4.12.0
    ```
 
 2. 重新構建 Docker 鏡像：
-
    ```bash
    docker compose build
-   # 或
-   docker-compose build
    ```
 
 3. 重啟服務：
    ```bash
    docker compose up -d --build
-   # 或使用 --build 標誌自動構建
    ```
 
 **當前依賴：**
@@ -152,7 +136,6 @@ ETL-with-Apache-Airflow/
 - `airflow-clickhouse-plugin` - ClickHouse 連接器
 - `clickhouse-connect` - ClickHouse Python 客戶端
 - `pandas` - 數據處理
-- `numpy` - 數值計算
 - `requests` - HTTP 請求
 - `python-dotenv` - 環境變數管理
 
@@ -174,35 +157,14 @@ cp env.example .env
 在 Airflow Web UI 中創建 ClickHouse 連接，或使用以下命令：
 
 ```bash
-# ODS 層連接
-airflow connections add clickhouse_ods \
+airflow connections add clickhouse_default \
   --conn-type clickhouse \
-  --conn-host clickhouse-server \
-  --conn-login airflow \
-  --conn-password airflow \
+  --conn-host host \
+  --conn-login user \
+  --conn-password assword \
   --conn-port 9000 \
-  --conn-schema ods
-
-# DW 層連接
-airflow connections add clickhouse_dw \
-  --conn-type clickhouse \
-  --conn-host clickhouse-server \
-  --conn-login airflow \
-  --conn-password airflow \
-  --conn-port 9000 \
-  --conn-schema dw
-
-# DM 層連接（可選）
-airflow connections add clickhouse_dm \
-  --conn-type clickhouse \
-  --conn-host clickhouse-server \
-  --conn-login airflow \
-  --conn-password airflow \
-  --conn-port 9000 \
-  --conn-schema dm
+  --conn-schema default
 ```
-
-> 💡 **提示**: 更多 ClickHouse 配置資訊請參考 `clickhouse/README.md`
 
 #### 資料來源
 
@@ -210,63 +172,33 @@ airflow connections add clickhouse_dm \
 
 #### 資料管線設計
 
-本專案採用**分層架構**，包含 ODS（操作型資料儲存）層和 DW（資料倉儲）層：
+本專案採用**分層架構**，包含 ODS（操作型資料儲存）層、DW（資料倉儲）層和 DM（資料市場）層：
 
 **ODS 層管線** (`ods_api_weather` DAG):
 
 ```mermaid
 graph LR
-ClickHouseOperator:create_table --> PythonOperator:extract --> PythonOperator:transform --> ClickHouseOperator:load --> ClickHouseOperator:cleanup --> TriggerDagRunOperator:trigger_dw
+A[create_table] --> B[extract] --> C[transform] --> D[load] --> E[cleanup] --> F[trigger_dw]
 ```
 
 **DW 層管線** (`dw_api_weather` DAG):
 
 ```mermaid
-graph TD
+graph LR
 A[create_table] --> B[read_weather_data]
 B --> C[transform_weather_data]
 C --> D[load_dim_time_data]
 C --> E[load_dim_location_data]
+C --> G[load_fact_weather_data]
 D --> F[optimize_data]
 E --> F
+G --> F
+F --> H[trigger_dm_api_weather]
 ```
 
-**ODS 層包含以下 Task:**
+**DM 層管線** (`dm_api_weather` DAG):
 
-1. **create_table**: <br>
-   使用 ClickHouse Operator，建立 ODS 層的資料表結構。
-
-2. **extract_data_from_api**: <br>
-   使用 Python Operator，向中央氣象署 API 請求天氣資訊，並將資料存成 JSON 檔案。
-
-3. **transform_data_use_pandas**: <br>
-   使用 Python Operator，將 JSON 檔案整理成需要的格式，並產生 SQL 插入語句。
-
-4. **write_to_clickhouse**: <br>
-   使用 ClickHouse Operator，執行 SQL script 將資料寫入 ClickHouse ODS 層。
-
-5. **cleanup_duplicate_records**: <br>
-   使用 ClickHouse Operator，清理重複的資料記錄。
-
-6. **trigger_dw_api_weather**: <br>
-   使用 TriggerDagRunOperator，觸發 DW 層的 DAG 執行。
-
-**DW 層包含以下 Task:**
-
-1. **create_table**: <br>
-   使用 ClickHouse Operator，建立 DW 層的維度表（dim_time、dim_location）。
-
-2. **read_weather_data**: <br>
-   使用 ClickHouse Operator，從 ODS 層讀取當天的天氣資料。
-
-3. **transform_weather_data**: <br>
-   使用 Python Operator，將 ODS 層的資料轉換成維度表的格式。
-
-4. **load_dim_time_data**: <br>
-   使用 ClickHouse Operator，將時間維度資料寫入 dim_time 表。
-
-5. **load_dim_location_data**: <br>
-   使用 ClickHouse Operator，將地點維度資料寫入 dim_location 表。
-
-6. **optimize_data**: <br>
-   使用 ClickHouse Operator，優化資料表以合併重複資料。
+```mermaid
+graph LR
+A[create_table] --> B[load_weather_summary] --> C[optimize_data]
+```
