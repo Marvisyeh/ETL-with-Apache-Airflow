@@ -222,8 +222,13 @@ ClickHouseOperator:create_table --> PythonOperator:extract --> PythonOperator:tr
 **DW 層管線** (`dw_api_weather` DAG):
 
 ```mermaid
-graph LR
-ClickHouseOperator:create_table --> ClickHouseOperator:read_weather_data --> PythonOperator:transform --> ClickHouseOperator:load_dim_time --> ClickHouseOperator:load_dim_location --> ClickHouseOperator:optimize
+graph TD
+A[create_table] --> B[read_weather_data]
+B --> C[transform_weather_data]
+C --> D[load_dim_time_data]
+C --> E[load_dim_location_data]
+D --> F[optimize_data]
+E --> F
 ```
 
 **ODS 層包含以下 Task:**
