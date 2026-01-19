@@ -25,3 +25,4 @@ __pycache__
 # config
 !.gitignore
 !.editorconfig
+!env.example
