@@ -352,6 +352,7 @@ services:
       - ./clickhouse/.volumes/ch_data:/var/lib/clickhouse
       - ./clickhouse/.volumes/ch_logs:/var/log/clickhouse-server
       - ./clickhouse/config/users.xml:/etc/clickhouse-server/users.xml
+      - ./dags/temp_data:/var/lib/clickhouse/user_files/temp_data
     environment:
       TZ: Asia/Taipei
       # Default user credentials

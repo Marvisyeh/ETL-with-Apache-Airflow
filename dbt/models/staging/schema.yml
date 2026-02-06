@@ -1,0 +1,31 @@
+version: 1
+
+models:
+  - name: stg_api__weathers
+    description: "Staging layer for weather data"
+    config:
+      materialized: view
+
+    tests:
+      - unique:
+          column_name: "locationName || '-' || startTime || '-' || endTime"
+
+    columns:
+      - name: startTime
+        description: "Start time of the weather data"
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: endTime
+        description: "End time of the weather data"
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: locationName
+        description: "Location name of the weather data"
+        tests:
+          - not_null:
+              config:
+                severity: error

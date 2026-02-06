@@ -1,0 +1,38 @@
+models:
+  - name: fct_weather_daily_summary
+    description: "每日氣象彙總表，用於分析各城市氣溫與降雨趨勢。"
+    columns:
+      - name: location_name
+        description: "城市名稱"
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: start_time
+        description: "當日開始時間"
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: end_time
+        description: "當日結束時間"
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: max_temp
+        description: "當日最高溫度 (攝氏)"
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: min_temp
+        description: "當日最低溫度 (攝氏)"
+        tests:
+          - not_null:
+              config:
+                severity: error
+      - name: temp_range
+        description: "當日溫差 (攝氏)"
+      - name: activity_suggestion
+        description: "當日活動建議"

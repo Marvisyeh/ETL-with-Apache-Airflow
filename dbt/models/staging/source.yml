@@ -1,0 +1,9 @@
+version: 1
+
+sources:
+  - name: landing_zone
+    database: raw
+    description: "Landing zone for weather data"
+    tables:
+      - database: raw
+        name: raw_api__weathers
