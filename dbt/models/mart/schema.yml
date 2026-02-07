@@ -1,6 +1,13 @@
 models:
-  - name: fct_weather_daily_summary
+  - name: fact_weather
     description: "每日氣象彙總表，用於分析各城市氣溫與降雨趨勢。"
+    config:
+      materialized: incremental
+      engine: MergeTree()
+      schema: mart
+      on_schema_change: sync_all_columns
+      unique_key: location_name,start_time,end_time
+      incremental_strategy: delete+insert
     columns:
       - name: location_name
         description: "城市名稱"
@@ -20,6 +27,10 @@ models:
           - not_null:
               config:
                 severity: error
+      - name: weather_desc
+        description: "天氣描述"
+      - name: rain_chance_pct
+        description: "降雨機率 (%)"
       - name: max_temp
         description: "當日最高溫度 (攝氏)"
         tests:

@@ -34,21 +34,7 @@ models:
       +schema: staging
       +materialized: view
 
-    intermediate:
-      +schema: intermediate
-      +materialized: table
-      +engine: MergeTree()
-      +order_by: ["location_name", "start_time"]
-
     mart:
       +schema: mart
       +materialized: table
       +engine: MergeTree()
-
-    dw:
-      +schema: dw
-      +materialized: table
-
-    dm:
-      +schema: dm
-      +materialized: table

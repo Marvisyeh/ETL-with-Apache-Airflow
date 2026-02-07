@@ -76,6 +76,7 @@ x-airflow-common: &airflow-common
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
+    - ${AIRFLOW_PROJ_DIR:-.}/dbt:/opt/airflow/dbt
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
   user: "${AIRFLOW_UID:-50000}:0"
@@ -349,7 +350,9 @@ services:
       - "9000:9000" # Native protocol port
       - "8123:8123" # HTTP interface port
     volumes:
-      - ./clickhouse/.volumes/ch_data:/var/lib/clickhouse
+      # 使用 named volume 讓 Docker 管理權限，避免 rename/metadata_dropped 權限錯誤
+      # - ./clickhouse/.volumes/ch_data:/var/lib/clickhouse
+      - clickhouse_data:/var/lib/clickhouse
       - ./clickhouse/.volumes/ch_logs:/var/log/clickhouse-server
       - ./clickhouse/config/users.xml:/etc/clickhouse-server/users.xml
       - ./dags/temp_data:/var/lib/clickhouse/user_files/temp_data
@@ -399,3 +402,4 @@ services:
 
 volumes:
   postgres-db-volume:
+  clickhouse_data:
